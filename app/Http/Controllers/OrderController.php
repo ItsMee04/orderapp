@@ -66,4 +66,32 @@ class OrderController extends Controller
         return response()->json(['data' => $data], 200);
         // return response()->json(['data' => $order], 200);
     }
+
+    public function doneOrder($id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status != "ordered") {
+            return response()->json('Order cannot accept to Done because status is not ordered', 403);
+        }
+
+        $order->status = "Done";
+        $order->save();
+
+        return response()->json(['Data' => $order, 'detail' => 'Status Diubah']);
+    }
+
+    public function payment($id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status != "Done") {
+            return response()->json('Payment cannot be done because status is not done or order payment has been received', 403);
+        }
+
+        $order->status = "Paid";
+        $order->save();
+
+        return response()->json(['Data' => $order, 'detail' => 'Status Diubah']);
+    }
 }
